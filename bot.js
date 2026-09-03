@@ -2,7 +2,14 @@ const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 let lastUpdateId = 0;
 
-async function sendTelegram(method, body) {
+async function checkUpdates() {
+    try {
+        const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/getUpdates?offset=${lastUpdateId + 1}&timeout=5`);
+        const data = await res.json();
+        
+        console.log("Ответ от Telegram:", JSON.stringify(data)); // <--- вставь сюда
+        
+        if (data.ok && data.result.length > 0) {
     try {
         const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${method}`, {
             method: 'POST',
