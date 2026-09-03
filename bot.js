@@ -2,14 +2,7 @@ const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 let lastUpdateId = 0;
 
-async function checkUpdates() {
-    try {
-        const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/getUpdates?offset=${lastUpdateId + 1}&timeout=5`);
-        const data = await res.json();
-        
-        console.log("Ответ от Telegram:", JSON.stringify(data)); // <--- вставь сюда
-        
-        if (data.ok && data.result.length > 0) {
+async function sendTelegram(method, body) {
     try {
         const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${method}`, {
             method: 'POST',
@@ -17,13 +10,17 @@ async function checkUpdates() {
             body: JSON.stringify(body)
         });
         return await res.json();
-    } catch (e) { return null; }
+    } catch (e) { 
+        return null; 
+    }
 }
 
 async function checkUpdates() {
     try {
         const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/getUpdates?offset=${lastUpdateId + 1}&timeout=5`);
         const data = await res.json();
+        
+        console.log("Ответ от Telegram:", JSON.stringify(data));
         
         if (data.ok && data.result.length > 0) {
             for (const update of data.result) {
@@ -90,7 +87,11 @@ async function checkUpdates() {
                 }
             }
         }
-    } catch (e) {}}
+    } catch (e) {
+        console.error('Помилка checkUpdates:', e);
+    }
+}
+
 console.log('🚀 Бот запущено у хмарі!');
 
 async function startPolling() {
@@ -100,7 +101,6 @@ async function startPolling() {
         } catch (err) {
             console.error('Помилка оновлення:', err);
         }
-        // Пауза 5 секунд перед следующим запросом, чтобы не перегружать порты
         await new Promise(resolve => setTimeout(resolve, 5000));
     }
 }
