@@ -83,7 +83,7 @@ async function checkUpdates() {
                 }
             }
         }
-    } catch (e) {}
+    } catch (e) {}}
 console.log('🚀 Бот запущено у хмарі!');
 
 async function startPolling() {
