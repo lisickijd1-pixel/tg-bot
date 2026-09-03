@@ -89,4 +89,17 @@ async function checkUpdates() {
 }
 
 console.log('🚀 Бот запущено у хмарі!');
-checkUpdates();
+
+async function startPolling() {
+    while (true) {
+        try {
+            await checkUpdates();
+        } catch (err) {
+            console.error('Помилка оновлення:', err);
+            // Ждем 3 секунды перед повторной попыткой при сбое сети
+            await new Promise(resolve => setTimeout(resolve, 3000));
+        }
+    }
+}
+
+startPolling();
